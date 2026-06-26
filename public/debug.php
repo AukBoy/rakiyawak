@@ -1,47 +1,67 @@
 <?php
 header('Content-Type: text/plain');
 
-echo "=== RAKIYAWAK POST-RESTART DIAGNOSTICS ===\n";
+echo "=== RAKIYAWAK NODE BINARY TEST ===\n";
 
-$public_html_path = '/home/rakiyawa/public_html';
-$app_path = '/home/rakiyawa/repositories/rakiyawak';
+$node_bin = '/home/rakiyawa/nodevenv/repositories/rakiyawak/20/bin/node';
+$server_js = '/home/rakiyawa/repositories/rakiyawak/server.js';
 
-echo "\n--- 1. Running Processes Check ---\n";
-if (function_exists('shell_exec')) {
-    echo shell_exec('ps aux | grep -i node');
+echo "Node binary: $node_bin\n";
+echo "Server file: $server_js\n\n";
+
+if (file_exists($node_bin)) {
+    echo "1. Checking Node version...\n";
+    $output = array();
+    $retval = -1;
+    exec("$node_bin -v 2>&1", $output, $retval);
+    echo "Exit code: $retval\n";
+    echo "Output:\n" . implode("\n", $output) . "\n\n";
 } else {
-    echo "shell_exec is disabled\n";
+    echo "ERROR: Node binary not found.\n\n";
 }
 
-echo "\n--- 2. Requesting /api/auth/login locally ---\n";
-$url = 'http://rakiyawak.com/api/auth/login';
-
-$options = array(
-    'http' => array(
-        'method'  => 'POST',
-        'header'  => "Content-Type: application/json\r\n",
-        'content' => json_encode(array('email' => 'test@test.com', 'password' => '123', 'role' => 'seeker')),
-        'ignore_errors' => true // Capture 404/500/etc.
-    )
-);
-$context  = stream_context_create($options);
-$response = file_get_contents($url, false, $context);
-
-echo "Response Headers:\n";
-if (isset($http_response_header)) {
-    print_r($http_response_header);
-} else {
-    echo "No response headers captured.\n";
-}
-
-echo "\nResponse Body (first 500 chars):\n";
-if ($response !== false) {
-    echo substr($response, 0, 500) . "\n";
-    if (strlen($response) > 500) {
-        echo "... [TRUNCATED] ...\n";
+if (file_exists($node_bin) && file_exists($server_js)) {
+    echo "2. Checking server.js syntax or startup...\n";
+    $output = array();
+    $retval = -1;
+    // Run node in check mode if supported, or just print version and run a quick test
+    exec("$node_bin -c $server_js 2>&1", $output, $retval);
+    echo "Syntax check exit code (0 means OK): $retval\n";
+    echo "Syntax check output:\n" . implode("\n", $output) . "\n\n";
+    
+    echo "3. Running server.js for a split second to see errors...\n";
+    // We run it with a timeout of 2 seconds
+    $descriptorspec = array(
+       0 => array("pipe", "r"),
+       1 => array("pipe", "w"),
+       2 => array("pipe", "w")
+    );
+    $process = proc_open("$node_bin $server_js", $descriptorspec, $pipes);
+    if (is_resource($process)) {
+        fclose($pipes[0]);
+        stream_set_blocking($pipes[1], 0);
+        stream_set_blocking($pipes[2], 0);
+        
+        usleep(1500000); // 1.5 seconds
+        
+        $stdout = stream_get_contents($pipes[1]);
+        $stderr = stream_get_contents($pipes[2]);
+        
+        fclose($pipes[1]);
+        fclose($pipes[2]);
+        
+        $status = proc_get_status($process);
+        echo "Process status:\n";
+        print_r($status);
+        
+        proc_terminate($process);
+        proc_close($process);
+        
+        echo "\nSTDOUT:\n" . ($stdout ? $stdout : "(no output)") . "\n";
+        echo "\nSTDERR:\n" . ($stderr ? $stderr : "(no output)") . "\n";
+    } else {
+        echo "proc_open failed\n";
     }
-} else {
-    echo "Error making request to $url\n";
 }
 
 ?>
