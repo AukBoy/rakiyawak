@@ -317,9 +317,12 @@ app.post('/api/bookmarks', (req, res) => {
 // SERVE STATIC PRODUCTION BUILD FILES
 app.use(express.static(path.join(__dirname, 'dist')));
 
-// SPA fallback
-app.get(/^(?!\/api).+/, (req, res) => {
-  res.sendFile(path.join(__dirname, 'dist', 'index.html'));
+// SPA fallback middleware
+app.use((req, res, next) => {
+  if (req.method === 'GET' && !req.path.startsWith('/api')) {
+    return res.sendFile(path.join(__dirname, 'dist', 'index.html'));
+  }
+  next();
 });
 
 // START SERVER
