@@ -1,4 +1,5 @@
 <?php
+// Version: 1.0.1
 header('Content-Type: text/plain');
 
 echo "=== RAKIYAWAK DEPLOYMENT DIAGNOSTICS ===\n";
