@@ -1,7 +1,7 @@
 <?php
 header('Content-Type: text/plain');
 
-echo "=== RAKIYAWAK LIVE PORT TEST ===\n";
+echo "=== RAKIYAWAK LIVE PORT TEST (10s WAIT) ===\n";
 
 $node_bin = '/home/rakiyawa/nodevenv/repositories/rakiyawak/20/bin/node';
 $server_js = '/home/rakiyawa/repositories/rakiyawak/server.js';
@@ -21,8 +21,9 @@ if (file_exists($node_bin) && file_exists($server_js)) {
         stream_set_blocking($pipes[1], 0);
         stream_set_blocking($pipes[2], 0);
         
-        // Wait 1.5 seconds for startup
-        usleep(1500000);
+        // Wait 10 seconds for the Node server to fully load and start
+        echo "Waiting 10 seconds for Node.js to load modules...\n";
+        sleep(10);
         
         echo "Sending test request to http://127.0.0.1:5000/ ...\n";
         $options = array(
@@ -44,9 +45,7 @@ if (file_exists($node_bin) && file_exists($server_js)) {
         echo "\nResponse body from test request:\n";
         echo $response ? substr($response, 0, 500) : "(empty response)\n";
         
-        // Wait another 1 second to capture any crash logs in stderr
-        usleep(1000000);
-        
+        // Read streams
         $stdout = stream_get_contents($pipes[1]);
         $stderr = stream_get_contents($pipes[2]);
         
