@@ -1,51 +1,73 @@
 <?php
 header('Content-Type: text/plain');
 
-echo "=== RAKIYAWAK SYSTEM LOG INSPECTOR ===\n";
+echo "=== RAKIYAWAK LIVE PORT TEST ===\n";
 
-$logs_dir = '/home/rakiyawa/logs';
-$etc_dir = '/home/rakiyawa/etc';
+$node_bin = '/home/rakiyawa/nodevenv/repositories/rakiyawak/20/bin/node';
+$server_js = '/home/rakiyawa/repositories/rakiyawak/server.js';
 
-echo "\n--- 1. Listing etc/rakiyawak.com ---\n";
-$etc_domain = $etc_dir . '/rakiyawak.com';
-if (is_dir($etc_domain)) {
-    $files = scandir($etc_domain);
-    print_r($files);
-} else {
-    echo "etc/rakiyawak.com not found\n";
-}
-
-echo "\n--- 2. Reading Gzipped Domain Logs ---\n";
-
-function printGzLog($filepath) {
-    if (file_exists($filepath)) {
-        echo "\n=== Log File: " . basename($filepath) . " (" . filesize($filepath) . " bytes) ===\n";
-        $zp = gzopen($filepath, "r");
-        if ($zp) {
-            $content = '';
-            while (!gzeof($zp)) {
-                $content .= gzread($zp, 4096);
-            }
-            gzclose($zp);
-            
-            $lines = explode("\n", $content);
-            $last_lines = array_slice($lines, -50); // Get last 50 lines
-            echo implode("\n", $last_lines) . "\n";
+if (file_exists($node_bin) && file_exists($server_js)) {
+    $descriptorspec = array(
+       0 => array("pipe", "r"),
+       1 => array("pipe", "w"),
+       2 => array("pipe", "w")
+    );
+    
+    echo "Starting Node.js server manually on port 5000...\n";
+    $process = proc_open("$node_bin $server_js", $descriptorspec, $pipes);
+    
+    if (is_resource($process)) {
+        fclose($pipes[0]);
+        stream_set_blocking($pipes[1], 0);
+        stream_set_blocking($pipes[2], 0);
+        
+        // Wait 1.5 seconds for startup
+        usleep(1500000);
+        
+        echo "Sending test request to http://127.0.0.1:5000/ ...\n";
+        $options = array(
+            'http' => array(
+                'method'  => 'GET',
+                'timeout' => 5,
+                'ignore_errors' => true
+            )
+        );
+        $context  = stream_context_create($options);
+        $response = file_get_contents('http://127.0.0.1:5000/', false, $context);
+        
+        echo "Response headers from test request:\n";
+        if (isset($http_response_header)) {
+            print_r($http_response_header);
         } else {
-            echo "Failed to open gzipped log file.\n";
+            echo "(no headers)\n";
         }
-        echo "====================================\n";
+        echo "\nResponse body from test request:\n";
+        echo $response ? substr($response, 0, 500) : "(empty response)\n";
+        
+        // Wait another 1 second to capture any crash logs in stderr
+        usleep(1000000);
+        
+        $stdout = stream_get_contents($pipes[1]);
+        $stderr = stream_get_contents($pipes[2]);
+        
+        fclose($pipes[1]);
+        fclose($pipes[2]);
+        
+        $status = proc_get_status($process);
+        echo "\nProcess status: " . ($status['running'] ? "Running" : "Stopped (Exit: " . $status['exitcode'] . ")") . "\n";
+        
+        proc_terminate($process);
+        proc_close($process);
+        
+        echo "\n--- STDOUT ---\n";
+        echo $stdout ? $stdout : "(no stdout)\n";
+        echo "\n--- STDERR ---\n";
+        echo $stderr ? $stderr : "(no stderr)\n";
+    } else {
+        echo "proc_open failed\n";
     }
-}
-
-if (is_dir($logs_dir)) {
-    $files = scandir($logs_dir);
-    foreach ($files as $file) {
-        if ($file === '.' || $file === '..') continue;
-        if (strpos($file, 'rakiyawak.com') !== false && strpos($file, '.gz') !== false) {
-            printGzLog($logs_dir . '/' . $file);
-        }
-    }
+} else {
+    echo "ERROR: node or server.js not found\n";
 }
 
 ?>
