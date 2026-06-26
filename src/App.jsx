@@ -10,12 +10,10 @@ import ProfilePage from './components/ProfilePage';
 import AuthModal from './components/AuthModal';
 
 import { 
-  initDB, 
   getSessionUser, 
   getJobs, 
   logout, 
   toggleBookmark, 
-  isJobBookmarked, 
   getApplicationsForSeeker,
   getBookmarks
 } from './utils/db';
@@ -37,9 +35,8 @@ export default function App() {
   const [appliedJobIds, setAppliedJobIds] = useState([]);
   const [selectedJob, setSelectedJob] = useState(null);
 
-  // Initialize DB and Session
+  // Initialize Session
   useEffect(() => {
-    initDB();
     const sessionUser = getSessionUser();
     if (sessionUser) {
       setCurrentUser(sessionUser);
@@ -48,14 +45,21 @@ export default function App() {
 
   // Fetch jobs based on queries
   useEffect(() => {
-    const filters = {
-      search: searchQuery,
-      location: locationQuery,
-      type: selectedType,
-      experience: selectedExp
+    const fetchJobs = async () => {
+      const filters = {
+        search: searchQuery,
+        location: locationQuery,
+        type: selectedType,
+        experience: selectedExp
+      };
+      try {
+        const filteredJobs = await getJobs(filters);
+        setJobs(filteredJobs);
+      } catch (err) {
+        console.error('Error fetching jobs:', err);
+      }
     };
-    const filteredJobs = getJobs(filters);
-    setJobs(filteredJobs);
+    fetchJobs();
   }, [searchQuery, locationQuery, selectedType, selectedExp]);
 
   // Fetch seeker application IDs and Bookmarks
@@ -63,14 +67,18 @@ export default function App() {
     refreshUserStates();
   }, [currentUser]);
 
-  const refreshUserStates = () => {
+  const refreshUserStates = async () => {
     if (currentUser) {
       if (currentUser.role === 'seeker') {
-        const apps = getApplicationsForSeeker(currentUser.id);
-        setAppliedJobIds(apps.map(a => a.jobId));
-        
-        const bms = getBookmarks(currentUser.id);
-        setBookmarks(bms.map(b => b.id));
+        try {
+          const apps = await getApplicationsForSeeker(currentUser.id);
+          setAppliedJobIds(apps.map(a => a.jobId));
+          
+          const bms = await getBookmarks(currentUser.id);
+          setBookmarks(bms.map(b => b.id));
+        } catch (err) {
+          console.error('Error refreshing seeker states:', err);
+        }
       }
     } else {
       setAppliedJobIds([]);
@@ -102,13 +110,17 @@ export default function App() {
     }
   };
 
-  const handleToggleBookmark = (jobId) => {
+  const handleToggleBookmark = async (jobId) => {
     if (!currentUser) {
       setAuthModal('login');
       return;
     }
-    toggleBookmark(currentUser.id, jobId);
-    refreshUserStates();
+    try {
+      await toggleBookmark(currentUser.id, jobId);
+      await refreshUserStates();
+    } catch (err) {
+      console.error('Error toggling bookmark:', err);
+    }
   };
 
   const handleViewJobDetails = (job) => {

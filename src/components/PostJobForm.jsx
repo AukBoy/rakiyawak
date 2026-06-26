@@ -15,7 +15,7 @@ export default function PostJobForm({ currentUser, onJobPosted }) {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
     setSuccess(false);
@@ -38,7 +38,7 @@ export default function PostJobForm({ currentUser, onJobPosted }) {
         benefits
       };
 
-      addJob(currentUser.id, jobData);
+      await addJob(currentUser.id, jobData);
       setSuccess(true);
       
       // Reset form

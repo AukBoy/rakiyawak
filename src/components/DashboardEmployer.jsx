@@ -21,24 +21,33 @@ export default function DashboardEmployer({ currentUser, onViewJobDetails, onUpd
     refreshData();
   }, [currentUser]);
 
-  const refreshData = () => {
+  const refreshData = async () => {
     if (currentUser) {
-      // Get jobs posted by this employer
-      const allJobs = getJobs();
-      const myJobs = allJobs.filter(j => j.employerId === currentUser.id);
-      setPostedJobs(myJobs);
+      try {
+        // Get jobs posted by this employer
+        const allJobs = await getJobs();
+        const myJobs = allJobs.filter(j => j.employerId === currentUser.id);
+        setPostedJobs(myJobs);
 
-      // Get applications for these jobs
-      setApplicants(getApplicationsForEmployer(currentUser.id));
+        // Get applications for these jobs
+        const apps = await getApplicationsForEmployer(currentUser.id);
+        setApplicants(apps);
+      } catch (err) {
+        console.error('Error refreshing employer dashboard:', err);
+      }
     }
   };
 
-  const handleStatusChange = (appId, newStatus) => {
-    updateApplicationStatus(appId, newStatus);
-    refreshData();
+  const handleStatusChange = async (appId, newStatus) => {
+    try {
+      await updateApplicationStatus(appId, newStatus);
+      await refreshData();
+    } catch (err) {
+      console.error('Error updating application status:', err);
+    }
   };
 
-  const handleProfileSave = (e) => {
+  const handleProfileSave = async (e) => {
     e.preventDefault();
     setSuccessMsg('');
 
@@ -53,11 +62,15 @@ export default function DashboardEmployer({ currentUser, onViewJobDetails, onUpd
       logoText: companyName.split(' ').map(w => w[0]).join('').substring(0, 3).toUpperCase()
     };
 
-    // Update in local DB
-    const newUser = updateProfile(currentUser.id, updatedData);
-    onUpdateSessionUser(newUser);
-    setSuccessMsg('Company details updated successfully!');
-    setTimeout(() => setSuccessMsg(''), 4000);
+    try {
+      // Update in local DB
+      const newUser = await updateProfile(currentUser.id, updatedData);
+      onUpdateSessionUser(newUser);
+      setSuccessMsg('Company details updated successfully!');
+      setTimeout(() => setSuccessMsg(''), 4000);
+    } catch (err) {
+      console.error('Error updating company profile:', err);
+    }
   };
 
   // Stats

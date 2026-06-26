@@ -14,13 +14,13 @@ export default function AuthModal({ initialMode = 'login', onClose, onAuthSucces
   const [location, setLocation] = useState('');
   const [companyName, setCompanyName] = useState('');
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
 
     try {
       if (mode === 'login') {
-        const user = login(email, password, role);
+        const user = await login(email, password, role);
         onAuthSuccess(user);
         onClose();
       } else {
@@ -35,7 +35,7 @@ export default function AuthModal({ initialMode = 'login', onClose, onAuthSucces
           extra.companyName = companyName;
         }
 
-        const user = signup(email, password, name, role, extra);
+        const user = await signup(email, password, name, role, extra);
         onAuthSuccess(user);
         onClose();
       }
@@ -44,14 +44,14 @@ export default function AuthModal({ initialMode = 'login', onClose, onAuthSucces
     }
   };
 
-  const handleDemoLogin = (demoRole) => {
+  const handleDemoLogin = async (demoRole) => {
     setError('');
     try {
       let user;
       if (demoRole === 'seeker') {
-        user = login('seeker@rakiyawak.lk', 'password', 'seeker');
+        user = await login('seeker@rakiyawak.lk', 'password', 'seeker');
       } else {
-        user = login('employer@rakiyawak.lk', 'password', 'employer');
+        user = await login('employer@rakiyawak.lk', 'password', 'employer');
       }
       onAuthSuccess(user);
       onClose();

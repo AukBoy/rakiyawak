@@ -32,19 +32,29 @@ export default function DashboardSeeker({ currentUser, onViewJobDetails, onUpdat
     refreshData();
   }, [currentUser]);
 
-  const refreshData = () => {
+  const refreshData = async () => {
     if (currentUser) {
-      setApplications(getApplicationsForSeeker(currentUser.id));
-      setBookmarks(getBookmarks(currentUser.id));
+      try {
+        const apps = await getApplicationsForSeeker(currentUser.id);
+        setApplications(apps);
+        const bms = await getBookmarks(currentUser.id);
+        setBookmarks(bms);
+      } catch (err) {
+        console.error('Error refreshing seeker dashboard:', err);
+      }
     }
   };
 
-  const handleToggleBookmark = (jobId) => {
-    toggleBookmark(currentUser.id, jobId);
-    refreshData();
+  const handleToggleBookmark = async (jobId) => {
+    try {
+      await toggleBookmark(currentUser.id, jobId);
+      await refreshData();
+    } catch (err) {
+      console.error('Error toggling bookmark:', err);
+    }
   };
 
-  const handleProfileSave = (e) => {
+  const handleProfileSave = async (e) => {
     e.preventDefault();
     setProfileSuccessMsg('');
 
@@ -85,11 +95,15 @@ export default function DashboardSeeker({ currentUser, onViewJobDetails, onUpdat
       resumeName: currentUser.resumeName || 'uploaded_resume.pdf'
     };
 
-    // Update in local DB
-    const newUser = updateProfile(currentUser.id, updatedData);
-    onUpdateSessionUser(newUser);
-    setProfileSuccessMsg('Profile updated successfully!');
-    setTimeout(() => setProfileSuccessMsg(''), 4000);
+    try {
+      // Update in local DB
+      const newUser = await updateProfile(currentUser.id, updatedData);
+      onUpdateSessionUser(newUser);
+      setProfileSuccessMsg('Profile updated successfully!');
+      setTimeout(() => setProfileSuccessMsg(''), 4000);
+    } catch (err) {
+      console.error('Error updating profile:', err);
+    }
   };
 
   // Stepper helper

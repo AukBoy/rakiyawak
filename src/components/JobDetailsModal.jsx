@@ -7,14 +7,14 @@ export default function JobDetailsModal({ job, currentUser, onApplied, isAlready
   const [error, setError] = useState('');
   const [submitting, setSubmitting] = useState(false);
 
-  const handleApplySubmit = (e) => {
+  const handleApplySubmit = async (e) => {
     e.preventDefault();
     if (!currentUser) return;
     setError('');
     setSubmitting(true);
 
     try {
-      applyToJob(job.id, currentUser.id, coverLetter);
+      await applyToJob(job.id, currentUser.id, coverLetter);
       onApplied();
       setShowApplyForm(false);
       setCoverLetter('');

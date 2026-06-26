@@ -28,7 +28,7 @@ export default function ProfilePage({ currentUser, onUpdateSessionUser }) {
   const [website, setWebsite] = useState(currentUser.website || '');
   const [industry, setIndustry] = useState(currentUser.industry || '');
 
-  const handleSave = (e) => {
+  const handleSave = async (e) => {
     e.preventDefault();
     setSuccessMsg('');
 
@@ -83,11 +83,15 @@ export default function ProfilePage({ currentUser, onUpdateSessionUser }) {
       };
     }
 
-    // Update in local DB
-    const newUser = updateProfile(currentUser.id, updatedData);
-    onUpdateSessionUser(newUser);
-    setSuccessMsg('Profile details updated successfully!');
-    setTimeout(() => setSuccessMsg(''), 4000);
+    try {
+      // Update in local DB
+      const newUser = await updateProfile(currentUser.id, updatedData);
+      onUpdateSessionUser(newUser);
+      setSuccessMsg('Profile details updated successfully!');
+      setTimeout(() => setSuccessMsg(''), 4000);
+    } catch (err) {
+      console.error('Error saving profile changes:', err);
+    }
   };
 
   const getInitials = (n) => {
