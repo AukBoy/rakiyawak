@@ -1,5 +1,4 @@
 ---
 deployment:
   tasks:
-    - export DEPLOYPATH=/home/rakiyawa/public_html/
-    - /bin/cp -R dist/* $DEPLOYPATH
+    # No tasks needed. The Node.js application serves the static frontend directly from repositories/rakiyawak/dist
