@@ -1,4 +1,4 @@
-// Custom LocalStorage Database Layer for Rakiyawak Job Portal
+// Custom LocalStorage Database Layer for Rakiyawak Job Portal (Sri Lanka Edition)
 
 const KEYS = {
   USERS: 'rakiyawak_users',
@@ -8,54 +8,54 @@ const KEYS = {
   SESSION: 'rakiyawak_session'
 };
 
-// Seed Data
+// Seed Data localized for Sri Lanka
 const defaultUsers = [
   {
     id: 'seeker1',
     email: 'seeker@rakiyawak.lk',
     password: 'password',
     role: 'seeker',
-    name: 'Dilshan Perera',
-    phone: '077 123 4567',
-    location: 'Colombo',
-    title: 'Junior Frontend Developer',
-    bio: 'Passionate React developer with 1.5 years of experience building responsive web applications. Enthusiastic about clean code and UI/UX design.',
-    skills: ['React', 'JavaScript', 'HTML5', 'CSS3', 'Git', 'REST APIs'],
+    name: 'Kasun Alwis',
+    phone: '077 456 7890',
+    location: 'Gampaha, Sri Lanka',
+    title: 'Associate React Developer',
+    bio: 'Passionate React developer. Graduate from the University of Moratuwa. Enthusiastic about build systems, clean UI/UX, and CSS layout engines.',
+    skills: ['React', 'JavaScript', 'HTML5', 'CSS Grid', 'Git', 'REST APIs'],
     education: [
-      { school: 'University of Moratuwa', degree: 'B.Sc. in Information Technology', year: '2025' }
+      { school: 'University of Moratuwa', degree: 'B.Sc. (Hons) in Information Technology', year: '2025' }
     ],
     experience: [
-      { company: 'Sysco LABS', role: 'Software Engineer Intern', duration: '6 months (2024)' }
+      { company: 'WSO2 Sri Lanka', role: 'Software Engineer Intern (Frontend)', duration: '6 months (2024)' }
     ],
-    resumeName: 'dilshan_perera_resume.pdf'
+    resumeName: 'kasun_alwis_resume.pdf'
   },
   {
     id: 'employer1',
     email: 'employer@rakiyawak.lk',
     password: 'password',
     role: 'employer',
-    name: 'Sarah Jenkins',
-    companyName: 'CodeGen International',
-    phone: '011 234 5678',
-    location: 'Trace Expert City, Colombo 10',
-    website: 'https://codegen.lk',
-    industry: 'Software & Cloud Solutions',
-    bio: 'CodeGen is a pioneer in travel technology software solutions globally, driven by innovation and high-performance teams.',
-    logoText: 'CG'
+    name: 'Nilanthi Fernando',
+    companyName: 'WSO2 Sri Lanka',
+    phone: '011 246 8100',
+    location: 'Palm Grove, Colombo 03',
+    website: 'https://wso2.com',
+    industry: 'Middleware & Cloud Integration',
+    bio: 'WSO2 is a global leader in digital transformation technologies, founded and headquartered with its primary engineering hub in Colombo, Sri Lanka.',
+    logoText: 'WSO2'
   },
   {
     id: 'employer2',
-    email: 'recruiting@dialog.lk',
+    email: 'recruiting@syscolabs.lk',
     password: 'password',
     role: 'employer',
-    name: 'Rohan de Silva',
-    companyName: 'Dialog Axiata',
-    phone: '077 765 4321',
-    location: 'Union Place, Colombo 02',
-    website: 'https://dialog.lk',
-    industry: 'Telecommunications',
-    bio: 'Dialog Axiata PLC is Sri Lanka\'s premier connectivity provider, operating the country\'s leading mobile network.',
-    logoText: 'D'
+    name: 'Suresh Perera',
+    companyName: 'Sysco LABS Sri Lanka',
+    phone: '011 202 4000',
+    location: 'Flower Road, Colombo 07',
+    website: 'https://syscolabs.lk',
+    industry: 'Foodservice Technology & Logistics',
+    bio: 'Sysco LABS is the technology innovation hub of Sysco, the world\'s largest foodservice company, based in the heart of Colombo.',
+    logoText: 'SL'
   }
 ];
 
@@ -63,103 +63,103 @@ const defaultJobs = [
   {
     id: 'job1',
     employerId: 'employer1',
-    companyName: 'CodeGen International',
-    logoText: 'CG',
-    title: 'Associate React Developer',
-    department: 'Frontend Engineering',
+    companyName: 'WSO2 Sri Lanka',
+    logoText: 'WSO2',
+    title: 'Associate Software Engineer (React)',
+    department: 'Integration Cloud Team',
     type: 'Full-time', // Full-time, Part-time, Remote, Contract, Internship
-    location: 'Colombo 10 (Hybrid)',
-    salary: 'LKR 150,000 - 220,000',
+    location: 'Colombo 03 (Hybrid)',
+    salary: 'LKR 180,000 - 250,000',
     experience: 'Associate (1-2 years)',
-    description: 'We are seeking an Associate React Developer to join our core product team. You will collaborate with designers and backend engineers to build highly responsive, state-of-the-art enterprise travel software applications.',
+    description: 'We are looking for an Associate Software Engineer skilled in React and modern CSS to join our Integration Cloud engineering team in Colombo. You will design, build, and support customer-facing configuration consoles.',
     requirements: [
-      'Strong proficiency in JavaScript, React, and modern state management (Redux, Context API).',
-      'Solid understanding of HTML5, CSS3, and responsive design systems.',
-      'Familiarity with RESTful APIs and modern frontend build pipelines (Vite, npm).',
-      'Experience with version control tools like Git.'
+      'B.Sc. in Computer Science or equivalent from a recognized Sri Lankan university.',
+      'Strong proficiency in JavaScript, React, and state management (Redux or Context API).',
+      'Solid experience with modern CSS (Flexbox, Grid, Custom Properties).',
+      'Familiarity with REST APIs and git collaboration workflows.'
     ],
     benefits: [
-      'Competitive salary package with health insurance.',
-      'Hybrid work environment (3 days remote, 2 days office).',
-      'Continuous learning and certification subsidies.',
-      'Free meals and gym access at Trace Expert City.'
+      'Competitive salary pegged to USD rates.',
+      'Comprehensive health insurance for employee and immediate family.',
+      'Hybrid working schedule (3 days remote, 2 days office).',
+      'Complimentary transport services and in-office meals.'
     ],
     createdAt: '2026-06-25T10:00:00.000Z'
   },
   {
     id: 'job2',
     employerId: 'employer1',
-    companyName: 'CodeGen International',
-    logoText: 'CG',
-    title: 'Senior Node.js Engineer',
-    department: 'Backend & APIs',
+    companyName: 'WSO2 Sri Lanka',
+    logoText: 'WSO2',
+    title: 'Senior QA Engineer (Automation)',
+    department: 'Quality Assurance',
     type: 'Full-time',
-    location: 'Colombo 10',
-    salary: 'LKR 350,000 - 480,000',
+    location: 'Colombo 03',
+    salary: 'LKR 350,000 - 500,000',
     experience: 'Senior (5+ years)',
-    description: 'Looking for a Senior backend engineer with extensive experience in Node.js, Express, and microservices architecture. You will be designing robust, scalable REST and GraphQL APIs handling millions of requests daily.',
+    description: 'Seeking a Senior QA Engineer to drive test automation frameworks for our core identity server products. You will write automated end-to-end integration tests and optimize CI/CD regression suites.',
     requirements: [
-      '5+ years of software development experience, with 3+ years in Node.js backend services.',
-      'Deep understanding of asynchronous programming, event loop, and performance tuning.',
-      'Familiarity with SQL/NoSQL databases (PostgreSQL, MongoDB) and Redis caching.',
-      'Experience with Docker, Kubernetes, and AWS deployment.'
+      '5+ years of software testing experience, with 3+ years specializing in Selenium or Playwright.',
+      'Proficiency in Java or Python for test automation scripting.',
+      'Experience with JMeter, Postman, and API load testing.',
+      'Understanding of AWS or Azure deployment pipelines.'
     ],
     benefits: [
-      'Top-tier salary matching global standards.',
-      'Performance-based annual bonuses.',
-      'Comprehensive family medical insurance.',
-      'Flexible working hours.'
+      'Top-tier salary pegged to USD with annual performance reviews.',
+      'Access to WSO2 wellness program and fitness center memberships.',
+      'Continuous learning budget for technical certifications.',
+      'Flexible work arrangements.'
     ],
     createdAt: '2026-06-24T12:00:00.000Z'
   },
   {
     id: 'job3',
     employerId: 'employer2',
-    companyName: 'Dialog Axiata',
-    logoText: 'D',
+    companyName: 'Sysco LABS Sri Lanka',
+    logoText: 'SL',
     title: 'UI/UX Designer',
-    department: 'Digital Design',
+    department: 'Digital Design Studio',
     type: 'Remote',
-    location: 'Colombo (100% Remote)',
-    salary: 'LKR 120,000 - 180,000',
+    location: 'Colombo 07 (Remote)',
+    salary: 'LKR 150,000 - 220,000',
     experience: 'Mid-Level (2-4 years)',
-    description: 'Join Dialog\'s digital experiences team to design user interfaces and seamless user flows for our mobile self-care app and digital service portals. You will translate wireframes into high-fidelity mockups.',
+    description: 'Join our design hub at Sysco LABS to design customer portals, mobile delivery applications, and logistics tools. You will lead UI wireframing, high-fidelity mockups, and run usability testing with global clients.',
     requirements: [
-      'Proven experience as a UI/UX designer with a strong portfolio.',
-      'Proficiency in Figma, Adobe XD, or Sketch.',
-      'Deep knowledge of wireframing, prototyping, and user journey mapping.',
-      'Basic understanding of frontend constraints (HTML/CSS).'
+      '2+ years of UI/UX design experience with a strong portfolio of live products.',
+      'Proficiency in Figma, prototyping tools, and Adobe Creative Suite.',
+      'Deep knowledge of typography, spacing hierarchies, and design systems.',
+      'Strong communication skills to collaborate with US-based product managers.'
     ],
     benefits: [
-      '100% Remote work setting.',
-      'Discounted Dialog connection and broadband packages.',
-      'Professional training courses on design systems.',
-      'Performance incentives.'
+      '100% remote workspace setup allowance.',
+      'LKR salary backed by USD stabilization adjustments.',
+      'Comprehensive OPD and surgical insurance.',
+      'Recreation allowances and online learning platform access.'
     ],
     createdAt: '2026-06-23T08:30:00.000Z'
   },
   {
     id: 'job4',
     employerId: 'employer2',
-    companyName: 'Dialog Axiata',
-    logoText: 'D',
-    title: 'Cloud DevOps Intern',
-    department: 'Cloud Services',
+    companyName: 'Sysco LABS Sri Lanka',
+    logoText: 'SL',
+    title: 'DevOps Engineering Intern',
+    department: 'Infrastructure & Cloud Services',
     type: 'Internship',
-    location: 'Colombo 02 (Hybrid)',
-    salary: 'LKR 45,000',
+    location: 'Colombo 07 (Hybrid)',
+    salary: 'LKR 50,000',
     experience: 'Internship (Undergraduate)',
-    description: 'Dialog\'s cloud division is seeking an enthusiastic Cloud DevOps intern. You will assist in CI/CD pipeline automation, monitoring, and cloud resource provisioning under the mentorship of senior engineers.',
+    description: 'We are seeking an undergraduate DevOps intern. You will work alongside senior engineers to automate cloud infrastructure, construct Jenkins CI/CD pipelines, and monitor server operations.',
     requirements: [
-      'Currently pursuing a Bachelor\'s degree in Computer Science, IT, or equivalent.',
-      'Basic knowledge of Linux administration and command line interface.',
-      'Familiarity with cloud concepts (AWS, Azure, or GCP).',
-      'Basic understanding of Docker containers and Git workflows.'
+      'Undergraduate in Computer Science, IT, or Computer Engineering (University of Moratuwa, SLIIT, IIT, or similar).',
+      'Basic knowledge of Linux server terminal and shell scripting.',
+      'Understanding of git workflows, Docker containers, and cloud fundamentals.',
+      'Highly motivated to learn infrastructure automation.'
     ],
     benefits: [
-      'Excellent learning opportunity with direct industry mentors.',
-      'Structured internship certificate and potential full-time conversion.',
-      'Subsidized transport allowance.'
+      'Mentorship by leading industry engineers.',
+      'Fast-paced learning environment with access to cutting-edge technologies.',
+      'Structured internship feedback and potential full-time hire opportunity.'
     ],
     createdAt: '2026-06-22T09:00:00.000Z'
   }
@@ -170,16 +170,16 @@ const defaultApplications = [
     id: 'app1',
     jobId: 'job1',
     seekerId: 'seeker1',
-    coverLetter: 'I am highly interested in this Associate React position. As a recent graduate from UOM, I have worked on multiple web projects using React and state management. I completed a 6-month internship at Sysco LABS where I optimized frontend loading times by 20%. I would love to bring my skills to CodeGen!',
+    coverLetter: 'I am highly interested in the Associate React position at WSO2. Having completed my internship at WSO2 Cloud team in 2024, I am very familiar with your product structures and engineering workflows. I look forward to contributing to WSO2 integration clouds!',
     status: 'Interviewing', // Applied, Screening, Interviewing, Offered, Rejected
     appliedAt: '2026-06-25T15:30:00.000Z',
     seekerDetails: {
-      name: 'Dilshan Perera',
+      name: 'Kasun Alwis',
       email: 'seeker@rakiyawak.lk',
-      phone: '077 123 4567',
-      location: 'Colombo',
-      title: 'Junior Frontend Developer',
-      resumeName: 'dilshan_perera_resume.pdf'
+      phone: '077 456 7890',
+      location: 'Gampaha, Sri Lanka',
+      title: 'Associate React Developer',
+      resumeName: 'kasun_alwis_resume.pdf'
     }
   }
 ];
@@ -196,6 +196,15 @@ const read = (key) => JSON.parse(localStorage.getItem(key));
 const write = (key, data) => localStorage.setItem(key, JSON.stringify(data));
 
 export const initDB = () => {
+  // If the DB was seeded with non-Sri Lankan data previously, let's clear it to force-update
+  const existingUsers = read(KEYS.USERS);
+  if (existingUsers && !existingUsers.some(u => u.name === 'Kasun Alwis')) {
+    localStorage.removeItem(KEYS.USERS);
+    localStorage.removeItem(KEYS.JOBS);
+    localStorage.removeItem(KEYS.APPLICATIONS);
+    localStorage.removeItem(KEYS.BOOKMARKS);
+  }
+
   if (!localStorage.getItem(KEYS.USERS)) {
     write(KEYS.USERS, defaultUsers);
   }
@@ -323,7 +332,7 @@ export const addJob = (employerId, jobData) => {
     id: 'job_' + Date.now(),
     employerId,
     companyName: employer.companyName,
-    logoText: employer.logoText || 'CG',
+    logoText: employer.logoText || 'WSO2',
     title: jobData.title,
     department: jobData.department,
     type: jobData.type,

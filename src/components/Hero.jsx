@@ -25,7 +25,7 @@ export default function Hero({
           Find Your Next <span className="text-gradient-accent">Dream Job</span>
         </h1>
         <p style={{ color: 'var(--text-secondary)', fontSize: '1.2rem', maxWidth: '600px', margin: '0 auto 48px auto' }}>
-          Discover thousands of job opportunities in Sri Lanka with premium employers. Build your profile, apply in one click, and track your progress.
+          Ayubowan! Discover thousands of job opportunities in Sri Lanka. Build your profile, apply in one click, and track your interviews.
         </p>
 
         {/* Search Bar */}
@@ -35,7 +35,7 @@ export default function Hero({
             <input 
               type="text" 
               className="search-field" 
-              placeholder="Job title, company, skills..." 
+              placeholder="e.g. React Developer, WSO2, QA Engineer..." 
               value={searchQuery}
               onChange={e => setSearchQuery(e.target.value)}
             />
@@ -45,7 +45,7 @@ export default function Hero({
             <input 
               type="text" 
               className="search-field" 
-              placeholder="City or 'Remote'" 
+              placeholder="e.g. Colombo, Kandy, Galle, or Remote" 
               value={locationQuery}
               onChange={e => setLocationQuery(e.target.value)}
             />
