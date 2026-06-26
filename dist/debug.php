@@ -1,42 +1,24 @@
 <?php
 header('Content-Type: text/plain');
 
-echo "=== RAKIYAWAK SYMLINK CREATOR ===\n";
+echo "=== RAKIYAWAK API DIR INSPECTOR ===\n";
 
-$target = '/home/rakiyawa/repositories/rakiyawak';
-$link = '/home/rakiyawa/public_html/api';
+$api_dir = '/home/rakiyawa/public_html/api';
 
-if (!file_exists($link)) {
-    echo "Creating symlink from $target to $link...\n";
-    if (symlink($target, $link)) {
-        echo "SUCCESS: Symlink created successfully!\n";
+if (is_dir($api_dir)) {
+    echo "Files in public_html/api:\n";
+    $files = scandir($api_dir);
+    print_r($files);
+    
+    $htaccess = $api_dir . '/.htaccess';
+    if (file_exists($htaccess)) {
+        echo "\nContents of public_html/api/.htaccess:\n";
+        echo file_get_contents($htaccess);
     } else {
-        echo "WARNING: Failed to create symlink. Trying to create a directory...\n";
-        if (mkdir($link, 0755)) {
-            echo "SUCCESS: Directory created successfully!\n";
-        } else {
-            echo "ERROR: Failed to create directory.\n";
-        }
+        echo "\nNo .htaccess found inside public_html/api/\n";
     }
 } else {
-    echo "INFO: api link/directory already exists.\n";
-    if (is_link($link)) {
-        echo "Type: Symlink pointing to: " . readlink($link) . "\n";
-    } else {
-        echo "Type: Regular directory.\n";
-    }
-}
-
-echo "\n--- current public_html contents ---\n";
-$public_html_path = '/home/rakiyawa/public_html';
-if (is_dir($public_html_path)) {
-    $files = scandir($public_html_path);
-    foreach ($files as $file) {
-        if ($file === '.' || $file === '..') continue;
-        $full_path = $public_html_path . '/' . $file;
-        $type = is_dir($full_path) ? (is_link($full_path) ? 'LINK' : 'DIR') : 'FILE';
-        echo "[$type] $file\n";
-    }
+    echo "public_html/api is not a directory.\n";
 }
 
 ?>
