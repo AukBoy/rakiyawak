@@ -1,92 +1,82 @@
 <?php
-// Version: 1.0.1
 header('Content-Type: text/plain');
 
 echo "=== RAKIYAWAK DEPLOYMENT DIAGNOSTICS ===\n";
 
 $public_html_path = '/home/rakiyawa/public_html';
 $app_path = '/home/rakiyawa/repositories/rakiyawak';
+$node_bin = '/home/rakiyawa/nodevenv/repositories/rakiyawak/20/bin/node';
+$server_js = $app_path . '/server.js';
 
-echo "\n--- .htaccess contents ---\n";
+echo "\n--- .htaccess check ---\n";
 $htaccess_file = $public_html_path . '/.htaccess';
 if (file_exists($htaccess_file)) {
-    echo file_get_contents($htaccess_file);
+    echo "Found .htaccess. Length: " . filesize($htaccess_file) . " bytes.\n";
 } else {
     echo ".htaccess not found at $htaccess_file\n";
 }
 
-echo "\n--- public_html directory listing ---\n";
-if (is_dir($public_html_path)) {
-    $files = scandir($public_html_path);
-    foreach ($files as $file) {
-        if ($file === '.' || $file === '..') continue;
-        $full_path = $public_html_path . '/' . $file;
-        $type = is_dir($full_path) ? 'DIR' : 'FILE';
-        $size = is_dir($full_path) ? '' : ' (' . filesize($full_path) . ' bytes)';
-        echo "[$type] $file$size\n";
-    }
+echo "\n--- Listing tmp/ directory ---\n";
+$tmp_dir = $app_path . '/tmp';
+if (is_dir($tmp_dir)) {
+    print_r(scandir($tmp_dir));
 } else {
-    echo "public_html directory not found\n";
+    echo "tmp directory not found\n";
 }
 
-echo "\n--- App directory listing ---\n";
-if (is_dir($app_path)) {
-    $files = scandir($app_path);
-    foreach ($files as $file) {
-        if ($file === '.' || $file === '..') continue;
-        $full_path = $app_path . '/' . $file;
-        $type = is_dir($full_path) ? 'DIR' : 'FILE';
-        $size = is_dir($full_path) ? '' : ' (' . filesize($full_path) . ' bytes)';
-        echo "[$type] $file$size\n";
-    }
+echo "\n--- Process check (ps aux) ---\n";
+if (function_exists('shell_exec')) {
+    $ps_output = shell_exec('ps aux | grep -i node');
+    echo $ps_output ? $ps_output : "No node processes found in ps output.\n";
 } else {
-    echo "App directory not found\n";
+    echo "shell_exec is disabled\n";
 }
 
-echo "\n--- Node virtualenv check ---\n";
-$nodevenv_path = '/home/rakiyawa/nodevenv';
-if (is_dir($nodevenv_path)) {
-    echo "nodevenv directory exists. Subdirectories:\n";
-    $venv_files = scandir($nodevenv_path);
-    print_r($venv_files);
-} else {
-    echo "nodevenv directory not found\n";
+echo "\n--- Manual Node.js Startup Test ---\n";
+if (!file_exists($node_bin)) {
+    echo "ERROR: Node binary not found at $node_bin\n";
+}
+if (!file_exists($server_js)) {
+    echo "ERROR: server.js not found at $server_js\n";
 }
 
-echo "\n--- Passenger / Node logs check ---\n";
-// Look for logs inside the application root or parent
-$possible_log_dirs = [
-    $app_path,
-    dirname($app_path),
-    '/home/rakiyawa'
-];
+if (file_exists($node_bin) && file_exists($server_js)) {
+    echo "Running command: $node_bin $server_js\n";
+    
+    $descriptorspec = array(
+       0 => array("pipe", "r"),  // stdin
+       1 => array("pipe", "w"),  // stdout
+       2 => array("pipe", "w")   // stderr
+    );
 
-foreach ($possible_log_dirs as $dir) {
-    if (is_dir($dir)) {
-        $files = scandir($dir);
-        foreach ($files as $file) {
-            if (strpos($file, 'log') !== false || strpos($file, 'err') !== false) {
-                $full_path = $dir . '/' . $file;
-                if (is_file($full_path)) {
-                    echo "Found Log: $full_path (" . filesize($full_path) . " bytes)\n";
-                    $content = file_get_contents($full_path);
-                    // print last 1000 characters
-                    echo "--- Last 1000 chars ---\n";
-                    echo substr($content, -1000) . "\n";
-                    echo "-----------------------\n";
-                }
-            }
-        }
+    $process = proc_open("$node_bin $server_js", $descriptorspec, $pipes);
+
+    if (is_resource($process)) {
+        fclose($pipes[0]);
+
+        // Set non-blocking
+        stream_set_blocking($pipes[1], 0);
+        stream_set_blocking($pipes[2], 0);
+
+        // Wait 2 seconds for server to start or crash
+        usleep(2000000); 
+
+        $stdout = stream_get_contents($pipes[1]);
+        $stderr = stream_get_contents($pipes[2]);
+
+        fclose($pipes[1]);
+        fclose($pipes[2]);
+
+        proc_terminate($process);
+        proc_close($process);
+
+        echo "--- STDOUT ---\n";
+        echo $stdout ? $stdout : "(no output)\n";
+        echo "\n--- STDERR ---\n";
+        echo $stderr ? $stderr : "(no output)\n";
+    } else {
+        echo "ERROR: Could not execute proc_open\n";
     }
-}
-
-// Check system passenger log if accessible
-$passenger_log = '/home/rakiyawa/.passenger/log/passenger.log';
-if (file_exists($passenger_log)) {
-    echo "Found Passenger log: $passenger_log (" . filesize($passenger_log) . " bytes)\n";
-    $content = file_get_contents($passenger_log);
-    echo "--- Last 1000 chars ---\n";
-    echo substr($content, -1000) . "\n";
 }
 
 echo "\n--- Environment variables ---\n";
